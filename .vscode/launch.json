@@ -26,7 +26,13 @@
             "runToEntryPoint": "main",
             "servertype": "external",
             "gdbTarget": "localhost:3334",
-            "device": "ATSAML22N18A",     
+            "device": "ATSAML22N18A",
+            "preLaunchCommands":[
+                "monitor start"
+            ],
+            "overrideResetCommands": [
+                "monitor reset init"
+            ]
         }
     ]
 } 
