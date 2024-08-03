@@ -7,7 +7,7 @@
         {
             "name": "Cortex Debug",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/app/firmware.elf",
+            "executable": "${workspaceFolder}/build/firmware.elf",
             "request": "launch",
             "type": "cortex-debug",
             "runToEntryPoint": "main",
@@ -20,7 +20,7 @@
         {
             "name": "Renode",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/app/firmware.elf",
+            "executable": "${workspaceFolder}/build/firmware.elf",
             "request": "launch",
             "type": "cortex-debug",
             "runToEntryPoint": "main",
