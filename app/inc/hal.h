@@ -7,7 +7,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#define SYS_FREQ 4000000
+#define SYS_FREQ 32786
 
 #define BIT(x) (1UL << (x))
 #define PIN(bank, num) ((((bank) - 'A') << 8) | (num))
