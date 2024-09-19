@@ -14,6 +14,7 @@
             "servertype": "jlink",
             "serverpath": "JLinkGDBServerCLExe",
             "device": "ATSAML22N18A",
+            "svdPath": "${workspaceFolder}/docs/ATSAML22N18A.svd",
             "interface": "swd",
             "serialNumber": "", //If you have more than one J-Link probe, add the serial number here.       
         },
