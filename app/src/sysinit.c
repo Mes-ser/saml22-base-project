@@ -42,7 +42,4 @@ void mcu_init(void)
 
 
 	SysTick_Config(SystemCoreClock / 1000); // Tick every 1 ms
-
-	// SERCOM4
-	GCLK->PCHCTRL[20].reg = 0x40;
 }
