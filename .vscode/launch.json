@@ -5,9 +5,9 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Cortex Debug",
+            "name": "Debug (App)",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/build/firmware.elf",
+            "executable": "${workspaceFolder}/app/build/app.elf",
             "request": "launch",
             "type": "cortex-debug",
             "runToEntryPoint": "main",
@@ -15,13 +15,42 @@
             "serverpath": "JLinkGDBServerCLExe",
             "device": "ATSAML22N18A",
             "svdPath": "${workspaceFolder}/docs/ATSAML22N18A.svd",
-            "interface": "swd",
-            "serialNumber": "", //If you have more than one J-Link probe, add the serial number here.       
+            "interface": "swd",      
         },
         {
-            "name": "Renode",
+            "name": "Debug (Bootloader)",
             "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/build/firmware.elf",
+            "executable": "${workspaceFolder}/bootloader/build/bootloader.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "jlink",
+            "serverpath": "JLinkGDBServerCLExe",
+            "device": "ATSAML22N18A",
+            "svdPath": "${workspaceFolder}/docs/ATSAML22N18A.svd",
+            "interface": "swd"
+        },
+        {
+            "name": "Renode (App)",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/app/build/app.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "external",
+            "gdbTarget": "localhost:3334",
+            "device": "ATSAML22N18A",
+            "preLaunchCommands":[
+                "monitor start"
+            ],
+            "overrideResetCommands": [
+                "monitor reset init"
+            ]
+        },
+        {
+            "name": "Renode (Bootloader)",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/bootloader/build/bootloader.elf",
             "request": "launch",
             "type": "cortex-debug",
             "runToEntryPoint": "main",
