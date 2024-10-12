@@ -12,12 +12,12 @@ void SysTick_Handler(void)
 void mcu_init(void);
 
 #define BOOTLOADER_END (0x8000)
-#define APP_BASE_ADDR (FLASH_ADDR + BOOTLOADER_END)
+#define APP_RESET_HANDLER (FLASH_ADDR + BOOTLOADER_END)
 
 void jump_to_main(void)
 {
     typedef void (*void_fn)(void);
-    uint32_t *reset_vector_entry = (uint32_t *)(APP_BASE_ADDR + 4u);
+    uint32_t *reset_vector_entry = (uint32_t *)(APP_RESET_HANDLER + 4u);
     uint32_t *reset_vector = (uint32_t *)(*reset_vector_entry);
 
     void_fn jump_fn = (void_fn)reset_vector;
@@ -27,7 +27,6 @@ void jump_to_main(void)
 
 int main(void)
 {
-    SCB->VTOR = 0x0u;
     mcu_init();
 
     uint16_t led = PIN('C', 27); // user_led0

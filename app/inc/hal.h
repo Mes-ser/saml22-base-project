@@ -7,8 +7,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define BOOTLOADER_SIZE (0x8000U)
-
 #define SYS_FREQ 16000000
 // #define SYS_FREQ 4000000
 
