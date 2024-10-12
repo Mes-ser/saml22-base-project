@@ -61,9 +61,9 @@ SECTIONS
 {
     .text :
     {
+        KEEP(*(.bootloader_section))
         . = ALIGN(4);
         _sfixed = .;
-        KEEP(*(.bootloader_section))
         KEEP(*(.vectors .vectors.*))
         *(.text .text.* .gnu.linkonce.t.*)
         *(.glue_7t) *(.glue_7)
