@@ -3,12 +3,11 @@
         {
             "name": "saml22",
             "includePath": [
-                "${workspaceFolder}/app",
-                "${workspaceFolder}/app/inc",
-                "${workspaceFolder}/dependencies/cmsis_core/CMSIS/Core/Include",
-                "${workspaceFolder}/dependencies/cmsis_saml22/saml22/include",
-                "${workspaceFolder}/dependencies/cmsis_saml22/saml22/source"
-
+                "${workspaceFolder}/app/inc/",
+                "${workspaceFolder}/bootloader/inc/",
+                "${workspaceFolder}/dependencies/cmsis_core/**",
+                "${workspaceFolder}/dependencies/cmsis_saml22/**",
+                "${workspaceFolder}/shared/inc/**"
             ],
             "defines": [
                 "__SAML22N18A__",

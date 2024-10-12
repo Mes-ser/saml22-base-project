@@ -1,17 +1,8 @@
 {
     "files.associations": {
-        "system_saml22.h": "c",
-        "sam.h": "c",
-        "saml22n18a.h": "c",
-        "conf_example.h": "c",
-        "asf.h": "c",
-        "compiler.h": "c",
-        "slcd.h": "c",
-        "saml22_xplained_pro_b.h": "c",
-        "inttypes.h": "c",
-        "core_cm0plus.h": "c",
-        "core_ca.h": "c",
-        "saml22.h": "c"
+        "*.repl": "csharp",
+        "*.resc": "shellscript",
+        "*.h": "c"
     },
     "cmake.configureOnOpen": false
 }

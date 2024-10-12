@@ -1,13 +1,8 @@
 #include <inttypes.h>
-#include <stdbool.h>
 
-#include "hal.h"
-
-static volatile uint32_t s_ticks; // volatile is important!!
-void SysTick_Handler(void)
-{
-	s_ticks++;
-}
+#include "core/system.h"
+#include "core/port.h"
+#include "core/sercom.h"
 
 void mcu_init(void);
 
@@ -21,12 +16,13 @@ int main(void)
 
 	uint32_t timer = 0, period = 1000;
 
+	uart_write_buf(SERCOM4, "Welcome in App.\n", 16);
+
 	for (;;)
 	{
-		if (timer_expired(&timer, period, s_ticks))
+		if (timer_expired(&timer, period, get_system_ticks()))
 		{
 			port_output_toggle(led);
-			uart_write_buf(SERCOM4, "Hello World\n", 12);
 		}
 	};
 }

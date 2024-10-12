@@ -13,6 +13,9 @@ ROOT = .
 SRC_DIR = ${ROOT}/src
 INC_DIR = ${ROOT}/inc
 
+SHARED_INC_DIR = ../shared/inc
+SHARED_SRC_DIR = ../shared/src
+
 BUILD_DIR = ${ROOT}/build
 DEPENDS_DIR = ../dependencies
 
@@ -24,15 +27,17 @@ LD_SCRIPT = ${ROOT}/saml22n18a_flash.ld
 CFLAGS  ?=  -W -Wall -Wextra -Werror -Wundef -Wshadow -Wdouble-promotion \
             -Wformat-truncation -fno-common -Wconversion \
             -g3 -Os -ffunction-sections -fdata-sections -I. \
-            -I. -Iinclude -I${CMSIS}/Core/Include -I${CMSIS_SAML22}/saml22/include -I${CMSIS_SAML22}/saml22/source -I${INC_DIR} \
+            -I. -Iinclude -I${CMSIS}/Core/Include -I${CMSIS_SAML22}/saml22/include -I${CMSIS_SAML22}/saml22/source -I${INC_DIR} -I${SHARED_INC_DIR} \
             -mcpu=${PLATFORM} -mthumb -D${MCU} $(EXTRA_CFLAGS)
             
 LDFLAGS ?= -T${LD_SCRIPT} -nostartfiles -nostdlib --specs=nano.specs -lc -lgcc -Wl,--gc-sections -Wl,-Map=${BUILD_DIR}/$@.map
 SOURCES = ${SRC_DIR}/${BINARY}.c
-SOURCES += ${SRC_DIR}/sysinit.c
 SOURCES += ${CMSIS_SAML22}/saml22/source/gcc/startup_saml22.c
 SOURCES += ${CMSIS_SAML22}/utils/syscalls/syscalls.c
 SOURCES += ${SRC_DIR}/bootloader.S
+SOURCES += ${SHARED_SRC_DIR}/core/system.c
+SOURCES += ${SHARED_SRC_DIR}/core/sercom.c
+SOURCES += ${SHARED_SRC_DIR}/core/port.c
 
 build: ${BINARY}.bin
 
