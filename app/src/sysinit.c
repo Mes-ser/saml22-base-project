@@ -8,8 +8,12 @@ void mcu_init(void)
 {
 
 	PM->INTFLAG.reg = 0xFF;
-	PM->PLCFG.reg |= 0x2;
-	while (!PM->INTFLAG.reg);
+	if (!(PM->PLCFG.reg & 0x2))
+	{
+		PM->PLCFG.reg |= 0x2;
+		while (!PM->INTFLAG.reg)
+			;
+	}
 
 
 	// OSC32KCTRL->XOSC32K.reg = (0x07 << OSC32KCTRL_XOSC32K_STARTUP_Pos 
