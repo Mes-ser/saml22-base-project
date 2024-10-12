@@ -13,6 +13,7 @@ void mcu_init(void);
 
 int main(void)
 {
+	SCB->VTOR = BOOTLOADER_SIZE;
 	mcu_init();
 	debug_uart_init(SERCOM4, 115200);
 
