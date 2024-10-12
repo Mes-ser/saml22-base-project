@@ -1,5 +1,9 @@
 *.elf
 *.map
 *.bin
+*.o
 
-/build
+app/build
+bootloader/build
+
+dependencies/cmsis_core
