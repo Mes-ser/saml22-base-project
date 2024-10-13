@@ -1,7 +1,10 @@
-
+#include "mcu_conf.h"
 #include "core/system.h"
 #include "core/port.h"
 #include "core/sercom.h"
+
+#define BAUD_RATE (115200)
+#define BAUD (((uint64_t)65536 * (SYS_FREQ - 16 * BAUD_RATE) / SYS_FREQ) + 1)
 
 void jump_to_main(void)
 {
@@ -17,7 +20,7 @@ void jump_to_main(void)
 int main(void)
 {
     mcu_init();
-    sercom_uart_init(SERCOM4, 115200);
+    sercom_uart_init(SERCOM4, BAUD);
 
     uint16_t led = PIN('C', 27); // user_led0
     port_dir(led, GPIO_DIR_OUTPUT);
