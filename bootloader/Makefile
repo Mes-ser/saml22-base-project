@@ -33,12 +33,15 @@ CFLAGS  ?=  -W -Wall -Wextra -Werror -Wundef -Wshadow -Wdouble-promotion \
 LDFLAGS ?= -T${LD_SCRIPT} -nostartfiles -nostdlib --specs=nano.specs -lc -lgcc -Wl,--gc-sections -Wl,-Map=${BUILD_DIR}/$@.map
 SOURCES = ${SRC_DIR}/${BINARY}.c
 SOURCES += ${SRC_DIR}/mcu_conf.c
+SOURCES += ${SRC_DIR}/comms.c
 SOURCES += ${CMSIS_SAML22}/saml22/source/gcc/startup_saml22.c
 SOURCES += ${CMSIS_SAML22}/utils/syscalls/syscalls.c
 SOURCES += ${SHARED_SRC_DIR}/core/system.c
 SOURCES += ${SHARED_SRC_DIR}/core/sercom.c
 SOURCES += ${SHARED_SRC_DIR}/core/port.c
 SOURCES += ${SHARED_SRC_DIR}/core/ring_buffer.c
+SOURCES += ${SHARED_SRC_DIR}/core/crc.c
+
 
 build: ${BINARY}.bin
 
