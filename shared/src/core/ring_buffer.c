@@ -16,9 +16,9 @@ bool ring_buffer_write(ring_buffer_t *ringBuffer, uint8_t byte)
     uint32_t localReadIndex = ringBuffer->readIndex;
     uint32_t localWriteIndex = ringBuffer->writeIndex;
 
-    uint32_t nextWriteIndex = (localWriteIndex + 1 ) & ringBuffer->mask;
+    uint32_t nextWriteIndex = (localWriteIndex + 1) & ringBuffer->mask;
 
-    if(nextWriteIndex == localReadIndex)
+    if (nextWriteIndex == localReadIndex)
     {
         return false;
     }

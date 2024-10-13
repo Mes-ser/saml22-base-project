@@ -73,7 +73,7 @@ void uart_write_buf(Sercom *sercom, char *buf, size_t len)
 		;
 }
 
-uint32_t uart_read(uint8_t* buf, const uint32_t len)
+uint32_t uart_read(uint8_t *buf, const uint32_t len)
 {
 	if (len <= 0)
 	{
