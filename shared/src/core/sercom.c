@@ -41,7 +41,7 @@ void sercom_uart_init(Sercom *sercom, unsigned long baud)
 	if (sercom->USART.CTRLA.bit.ENABLE != 0)
 		sercom->USART.CTRLA.bit.ENABLE = 0;
 	sercom->USART.CTRLA.reg = SERCOM_USART_CTRLA_DORD | SERCOM_USART_CTRLA_MODE(1) | SERCOM_USART_CTRLA_TXPO(1) | SERCOM_USART_CTRLA_RXPO(3);
-	sercom->USART.BAUD.reg = (uint16_t)((uint64_t)65536 * (SYS_FREQ - 16 * baud) / SYS_FREQ) + 1;
+	sercom->USART.BAUD.reg = (uint16_t)baud;
 
 	sercom->USART.INTENSET.reg = 0x4;
 
