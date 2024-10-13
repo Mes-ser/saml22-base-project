@@ -1,5 +1,3 @@
-#include <inttypes.h>
-
 #include "core/system.h"
 #include "core/port.h"
 #include "core/sercom.h"
@@ -9,7 +7,7 @@ void mcu_init(void);
 int main(void)
 {
 	mcu_init();
-	debug_uart_init(SERCOM4, 115200);
+	sercom_uart_init(SERCOM4, 115200);
 
 	uint16_t led = PIN('C', 27); // user_led0
 	port_dir(led, GPIO_DIR_OUTPUT);
@@ -23,6 +21,10 @@ int main(void)
 		if (timer_expired(&timer, period, get_system_ticks()))
 		{
 			port_output_toggle(led);
+		}
+		if(uart_data_available()){
+			uint8_t data = uart_read_byte();
+			uart_write_byte(SERCOM4, data + 1);
 		}
 	};
 }

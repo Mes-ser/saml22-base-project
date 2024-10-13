@@ -1,7 +1,7 @@
 #ifndef INC_SYSTEM_H
 #define INC_SYSTEM_H
 
-#include <stdbool.h>
+#include "common_defines.h"
 
 static volatile uint32_t s_ticks; // volatile is important!!
 

@@ -37,6 +37,7 @@ SOURCES += ${CMSIS_SAML22}/utils/syscalls/syscalls.c
 SOURCES += ${SHARED_SRC_DIR}/core/system.c
 SOURCES += ${SHARED_SRC_DIR}/core/sercom.c
 SOURCES += ${SHARED_SRC_DIR}/core/port.c
+SOURCES += ${SHARED_SRC_DIR}/core/ring_buffer.c
 
 build: ${BINARY}.bin
 

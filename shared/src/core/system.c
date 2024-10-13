@@ -1,6 +1,4 @@
-#include <saml22.h>
 #include "core/system.h"
-#include "common_defines.h"
 
 void SysTick_Handler(void)
 {

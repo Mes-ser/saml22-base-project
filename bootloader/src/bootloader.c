@@ -1,11 +1,7 @@
-#include <inttypes.h>
 
-#include "common_defines.h"
 #include "core/system.h"
 #include "core/port.h"
 #include "core/sercom.h"
-
-void mcu_init(void);
 
 void jump_to_main(void)
 {
@@ -21,7 +17,7 @@ void jump_to_main(void)
 int main(void)
 {
     mcu_init();
-    debug_uart_init(SERCOM4, 115200);
+    sercom_uart_init(SERCOM4, 115200);
 
     uint16_t led = PIN('C', 27); // user_led0
     port_dir(led, GPIO_DIR_OUTPUT);
