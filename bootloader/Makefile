@@ -42,6 +42,7 @@ SOURCES += ${SHARED_SRC_DIR}/core/sercom.c
 SOURCES += ${SHARED_SRC_DIR}/core/port.c
 SOURCES += ${SHARED_SRC_DIR}/core/ring_buffer.c
 SOURCES += ${SHARED_SRC_DIR}/core/crc.c
+SOURCES += ${SHARED_SRC_DIR}/core/simple_timer.c
 
 
 build: ${BINARY}.bin
