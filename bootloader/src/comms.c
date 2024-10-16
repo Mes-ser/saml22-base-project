@@ -17,7 +17,7 @@ static uint8_t data_byte_count = 0;
 static comms_packet_t temporary_packet = {.length = 0, .data = {0}, .crc = 0};
 static comms_packet_t retx_packet = {.length = 0, .data = {0}, .crc = 0};
 static comms_packet_t ack_packet = {.length = 0, .data = {0}, .crc = 0};
-static comms_packet_t last_transsmited_packet = {.length = 0, .data = {0}, .crc = 0};
+static comms_packet_t last_transmitted_packet = {.length = 0, .data = {0}, .crc = 0};
 
 static comms_packet_t packet_buffer[PACKET_BUFFER_SIZE];
 static uint32_t packet_read_index = 0;
@@ -115,7 +115,7 @@ void comms_update(void)
 
             if (comms_is_single_byte_packet(&temporary_packet, PACKET_RETX_DATA0))
             {
-                comms_write(&last_transsmited_packet);
+                comms_write(&last_transmitted_packet);
                 stage = CommsStage_Length;
                 break;
             }
@@ -153,6 +153,7 @@ bool comms_packets_available(void)
 void comms_write(comms_packet_t *packet)
 {
     uart_write_buf(interface, (char *)packet, PACKET_LENGTH);
+    comms_packet_copy(packet, &last_transmitted_packet);
 }
 void comms_read(comms_packet_t *packet)
 {
