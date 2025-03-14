@@ -29,7 +29,7 @@ CFLAGS  ?=  -W -Wall -Wextra -Werror -Wundef -Wshadow -Wdouble-promotion \
             -g3 -Os -ffunction-sections -fdata-sections -I. \
             -I. -Iinclude -I${CMSIS}/Core/Include -I${CMSIS_SAML22}/saml22/include -I${CMSIS_SAML22}/saml22/source -I${INC_DIR} -I${SHARED_INC_DIR} \
             -mcpu=${PLATFORM} -mthumb -D${MCU} $(EXTRA_CFLAGS)
-            
+
 LDFLAGS ?= -T${LD_SCRIPT} -nostartfiles -nostdlib --specs=nano.specs -lc -lgcc -Wl,--gc-sections -Wl,-Map=${BUILD_DIR}/$@.map
 SOURCES = ${SRC_DIR}/${BINARY}.c
 SOURCES += ${SRC_DIR}/mcu_conf.c
@@ -56,5 +56,5 @@ app.bin: app.elf
 clean:
 	rm -rf ${BUILD_DIR}/${BINARY}.*
 
-cmsis_core: 
+cmsis_core:
     git clone --depth 1 -b v6.1.0 https://github.com/ARM-software/CMSIS_6 ${DEPENDS_DIR}/$@
