@@ -3,6 +3,6 @@
 
 #include "common_defines.h"
 
-uint8_t crc8(uint8_t* data, uint32_t length);
+uint8_t crc8(uint8_t *data, uint32_t length);
 
 #endif // INC_CRC_H

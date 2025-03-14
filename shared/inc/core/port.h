@@ -8,11 +8,7 @@
 #define PINNO(pin) (pin & 255)
 #define PINBANK(pin) (pin >> 8)
 
-enum
-{
-    GPIO_DIR_INPUT,
-    GPIO_DIR_OUTPUT
-};
+enum { GPIO_DIR_INPUT, GPIO_DIR_OUTPUT };
 
 void port_dir_set(uint16_t);
 void port_dir_clear(uint16_t);
