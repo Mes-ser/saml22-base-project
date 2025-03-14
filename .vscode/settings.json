@@ -2,7 +2,10 @@
     "files.associations": {
         "*.repl": "csharp",
         "*.resc": "shellscript",
-        "*.h": "c"
+        "*.h": "c",
+        "cstdint": "c",
+        "string_view": "c"
     },
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "cortex-debug.variableUseNaturalFormat": false
 }

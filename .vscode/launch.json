@@ -15,7 +15,7 @@
             "serverpath": "JLinkGDBServerCLExe",
             "device": "ATSAML22N18A",
             "svdPath": "${workspaceFolder}/docs/ATSAML22N18A.svd",
-            "interface": "swd",      
+            "interface": "swd",
         },
         {
             "name": "Debug (Bootloader)",
@@ -40,7 +40,7 @@
             "servertype": "external",
             "gdbTarget": "localhost:3334",
             "device": "ATSAML22N18A",
-            "preLaunchCommands":[
+            "preLaunchCommands": [
                 "monitor start"
             ],
             "overrideResetCommands": [
@@ -57,7 +57,7 @@
             "servertype": "external",
             "gdbTarget": "localhost:3334",
             "device": "ATSAML22N18A",
-            "preLaunchCommands":[
+            "preLaunchCommands": [
                 "monitor start"
             ],
             "overrideResetCommands": [
@@ -65,4 +65,4 @@
             ]
         }
     ]
-} 
+}
