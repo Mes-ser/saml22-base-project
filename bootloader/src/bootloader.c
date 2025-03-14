@@ -1,16 +1,40 @@
-#include "mcu_conf.h"
+#include "bl_flash.h"
 #include "comms.h"
-#include "core/system.h"
 #include "core/port.h"
 #include "core/sercom.h"
-#include "bl_flash.h"
 #include "core/simple_timer.h"
+#include "core/system.h"
+#include "mcu_conf.h"
 
 #define BAUD_RATE (115200)
 #define BAUD (((uint64_t)65536 * (SYS_FREQ - 16 * BAUD_RATE) / SYS_FREQ) + 1)
 
-void jump_to_main(void)
-{
+#define DEVICE_ID (0x42)
+
+#define SYNC_SEQ_0 (0xc4)
+#define SYNC_SEQ_1 (0x55)
+#define SYNC_SEQ_2 (0x7e)
+#define SYNC_SEQ_3 (0x10)
+
+typedef enum bl_state_t {
+    BL_State_Sync,
+    BL_State_WaitForUpdateReq,
+    BL_State_DeviceIDReq,
+    BL_State_DeviceIDRsp,
+    BL_State_FWLengthReq,
+    BL_State_FWLengthRsp,
+    BL_State_EraseApp,
+    BL_State_ReceiveFirmware,
+    BL_State_Done,
+} bl_state_t;
+
+static bl_state_t state = BL_State_Sync;
+static uint32_t   fw_length = 0;
+static uint32_t   bytes_written = 0;
+
+static uint8_t sync_seq[4] = {0};
+
+void jump_to_main(void) {
     typedef void (*void_fn)(void);
     uint32_t *reset_vector_entry = (uint32_t *)(APP_RESET_HANDLER + 4u);
     uint32_t *reset_vector = (uint32_t *)(*reset_vector_entry);
@@ -22,8 +46,7 @@ void jump_to_main(void)
 
 #define SIZE (1029)
 
-int main(void)
-{
+int main(void) {
     mcu_init();
     sercom_uart_init(SERCOM4, BAUD);
     comms_setup(SERCOM4);
@@ -32,13 +55,6 @@ int main(void)
     port_dir(led, GPIO_DIR_OUTPUT);
 
     uint32_t timer = 0, period = 100;
-
-    // uint8_t data[SIZE] = {0};
-
-    // for (uint32_t i = 0; i < SIZE; i++)
-    // {
-    //     data[i] = i & 0xFF;
-    // }
 
     uart_write_buf(SERCOM4, "Welcome in bootloader.\n", 23);
 
@@ -61,45 +77,15 @@ int main(void)
     //     uart_write_buf(SERCOM4, "Write error.\n", 13);
     // }
 
-    simple_timer_t timer0;
-    simple_timer_init(&timer0, 1000, false);
-    simple_timer_t timer1;
-    simple_timer_init(&timer1, 5000, true);
-    simple_timer_t timer3;
-    simple_timer_init(&timer3, 60 * 1000, false);
+    simple_timer_t timer;
 
-    for (;;)
-    {
-        if (timer_expired(&timer, period, get_system_ticks()))
-        {
-            port_output_toggle(led);
+    while (true) {
+        if (state == BL_State_Sync) {
+            if (uart_data_available()) {
+            }
         }
+    }
 
-        if (simple_timer_has_elapsed(&timer0))
-        {
-            uart_write_buf(SERCOM4, "Timer0 elasped\n", 15);
-        }
-        if (simple_timer_has_elapsed(&timer1))
-        {
-            uart_write_buf(SERCOM4, "Timer1 elasped\n", 15);
-            simple_timer_reset(&timer0);
-        }
-        if(simple_timer_has_elapsed(&timer3))
-        {
-            uart_write_buf(SERCOM4, "Timer3 elasped\n", 15);
-            break;
-        }
-        // comms_update();
-        // if(comms_packets_available())
-        // {
-        //     comms_packet_t test;
-        //     comms_read(&test);
-        //     if(test.data[PACKET_DATA_LENGTH - 1] == 0xEE)
-        //     {
-        //         break;
-        //     }
-        // }
-    };
     uart_write_buf(SERCOM4, "Jumping to App.\n", 16);
     jump_to_main();
 
