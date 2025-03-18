@@ -1,4 +1,7 @@
 #include "comms.h"
+
+#include <string.h>
+
 #include "core/crc.h"
 #include "core/sercom.h"
 
@@ -11,23 +14,21 @@ typedef enum comms_stage_t {
 } comms_stage_t;
 
 static comms_stage_t stage = CommsStage_Length;
-static uint8_t       data_byte_count = 0;
+static uint8_t data_byte_count = 0;
 
 static comms_packet_t temporary_packet = {.length = 0, .data = {0}, .crc = 0};
 static comms_packet_t retx_packet = {.length = 0, .data = {0}, .crc = 0};
 static comms_packet_t ack_packet = {.length = 0, .data = {0}, .crc = 0};
-static comms_packet_t last_transmitted_packet = {
-    .length = 0, .data = {0}, .crc = 0};
+static comms_packet_t last_transmitted_packet = {.length = 0, .data = {0}, .crc = 0};
 
 static comms_packet_t packet_buffer[PACKET_BUFFER_SIZE];
-static uint32_t       packet_read_index = 0;
-static uint32_t       packet_write_index = 0;
-static uint32_t       packet_buffer_mask = PACKET_BUFFER_SIZE - 1;
+static uint32_t packet_read_index = 0;
+static uint32_t packet_write_index = 0;
+static uint32_t packet_buffer_mask = PACKET_BUFFER_SIZE - 1;
 
 static Sercom *interface;
 
-static bool comms_is_single_byte_packet(const comms_packet_t *packet,
-                                        const uint8_t         byte) {
+bool comms_is_single_byte_packet(const comms_packet_t *packet, const uint8_t byte) {
     if (packet->length != 1) {
         return false;
     }
@@ -45,99 +46,78 @@ static bool comms_is_single_byte_packet(const comms_packet_t *packet,
     return true;
 }
 
-static void comms_packet_copy(const comms_packet_t *source,
-                              comms_packet_t       *destination) {
-    destination->length = source->length;
-    for (uint8_t i = 0; i < PACKET_DATA_LENGTH; i++) {
-        destination->data[i] = source->data[i];
-    }
-    destination->crc = source->crc;
+void comms_create_single_byte_packet(comms_packet_t *packet, uint8_t byte) {
+    memset(packet, 0xff, sizeof(comms_packet_t));
+    packet->length = 1;
+    packet->data[0] = byte;
+    packet->crc = comms_compute_crc(packet);
 }
 
 void comms_setup(Sercom *sercom) {
     interface = sercom;
 
-    retx_packet.length = 1;
-    retx_packet.data[0] = PACKET_RETX_DATA0;
-    for (uint8_t i = 1; i < PACKET_DATA_LENGTH; i++) {
-        retx_packet.data[i] = 0xFF;
-    }
-    retx_packet.crc = comms_compute_crc(&retx_packet);
-
-    ack_packet.length = 1;
-    ack_packet.data[0] = PACKET_ACK_DATA0;
-    for (uint8_t i = 1; i < PACKET_DATA_LENGTH; i++) {
-        ack_packet.data[i] = 0xFF;
-    }
-    ack_packet.crc = comms_compute_crc(&ack_packet);
+    comms_create_single_byte_packet(&retx_packet, PACKET_RETX_DATA0);
+    comms_create_single_byte_packet(&ack_packet, PACKET_ACK_DATA0);
 }
 
 void comms_update(void) {
     while (uart_data_available()) {
         switch (stage) {
-        case CommsStage_Length: {
-            temporary_packet.length = uart_read_byte();
-            stage = CommsStage_Data;
-        } break;
-        case CommsStage_Data: {
-            temporary_packet.data[data_byte_count++] = uart_read_byte();
-            if (data_byte_count >= PACKET_DATA_LENGTH) {
-                data_byte_count = 0;
-                stage = CommsStage_CRC;
-            }
-        } break;
-        case CommsStage_CRC: {
-            temporary_packet.crc = uart_read_byte();
+            case CommsStage_Length: {
+                temporary_packet.length = uart_read_byte();
+                stage = CommsStage_Data;
+            } break;
+            case CommsStage_Data: {
+                temporary_packet.data[data_byte_count++] = uart_read_byte();
+                if (data_byte_count >= PACKET_DATA_LENGTH) {
+                    data_byte_count = 0;
+                    stage = CommsStage_CRC;
+                }
+            } break;
+            case CommsStage_CRC: {
+                temporary_packet.crc = uart_read_byte();
 
-            if (temporary_packet.crc != comms_compute_crc(&temporary_packet)) {
-                comms_write(&retx_packet);
+                if (temporary_packet.crc != comms_compute_crc(&temporary_packet)) {
+                    comms_write(&retx_packet);
+                    stage = CommsStage_Length;
+                    break;
+                }
+
+                if (comms_is_single_byte_packet(&temporary_packet, PACKET_RETX_DATA0)) {
+                    comms_write(&last_transmitted_packet);
+                    stage = CommsStage_Length;
+                    break;
+                }
+
+                if (comms_is_single_byte_packet(&temporary_packet, PACKET_ACK_DATA0)) {
+                    stage = CommsStage_Length;
+                    break;
+                }
+
+                uint32_t next_write_index = (packet_write_index + 1) & packet_buffer_mask;
+                if (next_write_index == packet_read_index) {
+                    __asm__("BKPT #0");
+                }
+                memcpy(&packet_buffer[packet_write_index], &temporary_packet, sizeof(comms_packet_t));
+                packet_write_index = next_write_index;
+                comms_write(&ack_packet);
                 stage = CommsStage_Length;
-                break;
-            }
-
-            if (comms_is_single_byte_packet(&temporary_packet,
-                                            PACKET_RETX_DATA0)) {
-                comms_write(&last_transmitted_packet);
+            } break;
+            default: {
                 stage = CommsStage_Length;
-                break;
-            }
-
-            if (comms_is_single_byte_packet(&temporary_packet,
-                                            PACKET_ACK_DATA0)) {
-                stage = CommsStage_Length;
-                break;
-            }
-
-            uint32_t next_write_index =
-                (packet_write_index + 1) & packet_buffer_mask;
-            if (next_write_index == packet_read_index) {
-                __asm__("BKPT #0");
-            }
-            comms_packet_copy(&temporary_packet,
-                              &packet_buffer[packet_write_index]);
-            packet_write_index = next_write_index;
-            comms_write(&ack_packet);
-            stage = CommsStage_Length;
-        } break;
-        default: {
-            stage = CommsStage_Length;
-        } break;
+            } break;
         }
     }
 }
 
-bool comms_packets_available(void) {
-    return packet_read_index != packet_write_index;
-}
+bool comms_packets_available(void) { return packet_read_index != packet_write_index; }
 void comms_write(comms_packet_t *packet) {
     uart_write_buf(interface, (char *)packet, PACKET_LENGTH);
-    comms_packet_copy(packet, &last_transmitted_packet);
+    memcpy(&last_transmitted_packet, packet, sizeof(comms_packet_t));
 }
 void comms_read(comms_packet_t *packet) {
-    comms_packet_copy(&packet_buffer[packet_read_index], packet);
+    memcpy(packet, &packet_buffer[packet_read_index], sizeof(comms_packet_t));
     packet_read_index = (packet_read_index + 1) & packet_buffer_mask;
 }
 
-uint8_t comms_compute_crc(comms_packet_t *packet) {
-    return crc8((uint8_t *)packet, PACKET_LENGTH - PACKET_CRC_BYTES);
-}
+uint8_t comms_compute_crc(comms_packet_t *packet) { return crc8((uint8_t *)packet, PACKET_LENGTH - PACKET_CRC_BYTES); }
