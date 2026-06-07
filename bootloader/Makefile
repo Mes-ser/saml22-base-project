@@ -35,6 +35,7 @@ SOURCES = ${SRC_DIR}/${BINARY}.c
 SOURCES += ${SRC_DIR}/mcu_conf.c
 SOURCES += ${SRC_DIR}/comms.c
 SOURCES += ${SRC_DIR}/bl_flash.c
+SOURCES += ${SRC_DIR}/stats.c
 SOURCES += ${CMSIS_SAML22}/saml22/source/gcc/startup_saml22.c
 SOURCES += ${CMSIS_SAML22}/utils/syscalls/syscalls.c
 SOURCES += ${SHARED_SRC_DIR}/core/system.c
